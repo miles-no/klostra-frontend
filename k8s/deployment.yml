@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: klostra-frontend
+  name: klostra-frontend
+  namespace: frontend
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: klostra-frontend
+  revisionHistoryLimit: 30
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: klostra-frontend
+    spec:
+      containers:
+        - args:
+            - npm
+            - run
+            - start
+          image: miles.azurecr.io/klostra-frontend
+          imagePullPolicy: Always
+          name: klostra-frontend
+          ports:
+            - containerPort: 5000
+          resources: {}
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: regcred
+status: {}
