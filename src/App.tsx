@@ -1,6 +1,8 @@
 import React from "react";
 import logo from "./logo.svg";
-import Graph from "./Graph";
+import Graph from "./components/Graph";
+import Button from "./components/Button";
+import Dropdown from "./components/Dropdown";
 import "./App.css";
 
 function App() {
@@ -8,7 +10,9 @@ function App() {
     <div className="App">
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <Graph/>
+        <Dropdown />
+        <Button />
+        <Graph />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>

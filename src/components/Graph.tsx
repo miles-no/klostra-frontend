@@ -1,6 +1,6 @@
 import React from "react";
-import { gql, useQuery } from "@apollo/client";
-import { TooltipContainerStyles } from "./constants/tooltip-container-styles";
+import { useQuery } from "@apollo/react-hooks";
+import { TooltipContainerStyles } from "../constants/tooltip-container-styles";
 import {
   LineChart,
   Line,
@@ -10,47 +10,15 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import { COLORS } from "../constants/colors";
+import {APP_BAR_COLOR_SETTING_QUERY, GET_DATA} from "../graphql/query";
 
-const GET_DATA = gql`
-  {
-    dataset {
-      id
-    }
-    kommune(where: { id: { _in: [101, 104] } }) {
-      kommune_nr
-      id
-      navn
-    }
-    statistikkvariabel(where: { id: { _eq: 1 } }) {
-      variabelnavn
-      id
-    }
-    verdi(
-      where: {
-        kommune_id: { _in: [101, 104] }
-        tid_id: { _in: [2015, 2016, 2017, 2018, 2019] }
-        variabel_id: { _eq: 1 }
-        verdi: {}
-      }
-    ) {
-      kommune_id
-      tid_id
-      variabel_id
-      verdi
-    }
-  }
-`;
-const COLORS = [
-  "#3066BE",
-  "#20A39E",
-  "#61D095",
-  "#FFBA49",
-  "#EF5B5B",
-  "#A4036F",
-];
+
 const Graph = () => {
   const { loading, error, data } = useQuery(GET_DATA);
-
+  const { loading: loadingtest, data: test } = useQuery(
+    APP_BAR_COLOR_SETTING_QUERY
+  );
   let kommuner = {} as any;
   let newinput = [] as any;
   if (!loading && !error) {
@@ -64,9 +32,7 @@ const Graph = () => {
         if (v.tid_id === year) {
           element["kommune_id_" + v.kommune_id] = v.verdi;
         }
-        //element["kommune_id"] = v.kommune_id;
       });
-      //console.log(element)
       newinput.push({
         year: year,
         ...element,
@@ -74,12 +40,15 @@ const Graph = () => {
     });
   }
 
-  if (loading) return <div>Loading...</div>;
+  if (loading || loadingtest) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
-  console.log(data, kommuner);
   return (
     <div>
-      <p style={{fontSize:"0.7em"}}>{data.statistikkvariabel[0].variabelnavn}</p>
+      {test.appBarColorSetting.setting}
+      {test.appBarColorSetting.name}
+      <p style={{ fontSize: "0.7em" }}>
+        {data.statistikkvariabel[0].variabelnavn}
+      </p>
       <LineChart
         width={500}
         height={300}

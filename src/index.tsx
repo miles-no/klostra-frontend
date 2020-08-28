@@ -4,8 +4,14 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import client from "./graphql/client";
-import { ApolloProvider } from "@apollo/client";
-
+import { ApolloProvider } from "@apollo/react-hooks";
+/*const sagaMiddleware = createSagaMiddleware();
+const client = new ApolloClient();
+const store = createStore(
+  reducers,
+  composeWithDevTools(applyMiddleware(sagaMiddleware))
+);
+sagaMiddleware.run(rootSaga);*/
 ReactDOM.render(
   <React.StrictMode>
     <ApolloProvider client={client}>

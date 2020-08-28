@@ -1,0 +1,8 @@
+{
+  "appBarColorSetting": {
+    "id": 1,
+    "name": "App Bar Color",
+    "setting": "primary",
+    "__typename": "AppBarColorSetting"
+  }
+}
