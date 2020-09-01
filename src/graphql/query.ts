@@ -28,6 +28,32 @@ export const GET_DATA = gql`
     }
   }
 `;
+export const GET_DATA_KOMMUNE = gql`
+  query verdiList($kommuner: [Int!]) {
+    kommune(where: { id: { _in: [101, 104] } }) {
+      kommune_nr
+      id
+      navn
+    }
+    statistikkvariabel(where: { id: { _eq: 1 } }) {
+      variabelnavn
+      id
+    }
+    verdi(
+      where: {
+        kommune_id: { _in: $kommuner }
+        tid_id: { _in: [2015, 2016, 2017, 2018, 2019] }
+        variabel_id: { _eq: 1 }
+        verdi: {}
+      }
+    ) {
+      kommune_id
+      tid_id
+      variabel_id
+      verdi
+    }
+  }
+`;
 export const GET_KOMMUNE = gql`
   {
     kommune {
@@ -47,8 +73,20 @@ export const APP_BAR_COLOR_SETTING_QUERY = gql`
     }
   }
 `;
+export const ACTIVE_KOMMUNER_QUERY = gql`
+  query activeKommuner {
+    activeKommuner @client {
+      kommuner @client
+    }
+  }
+`;
 export const UPDATE_APP_BAR_COLOR_SETTING_MUTATION = gql`
   mutation updateAppBarColorSetting($setting: String!, $name: String!) {
     updateAppBarColorSetting(setting: $setting, name: $name) @client
+  }
+`;
+export const UPDATE_ACTIVE_KOMMUNER_MUTATION = gql`
+  mutation updateActiveKommuner($kommuner: [int!]) {
+    updateActiveKommuner(kommuner: $kommuner) @client
   }
 `;

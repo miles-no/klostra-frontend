@@ -11,14 +11,28 @@ import {
   Legend,
 } from "recharts";
 import { COLORS } from "../constants/colors";
-import {APP_BAR_COLOR_SETTING_QUERY, GET_DATA} from "../graphql/query";
-
+import {
+  APP_BAR_COLOR_SETTING_QUERY,
+  GET_DATA,
+  GET_DATA_KOMMUNE,
+  ACTIVE_KOMMUNER_QUERY,
+} from "../graphql/query";
 
 const Graph = () => {
-  const { loading, error, data } = useQuery(GET_DATA);
+  const {
+    loading: loadingKommuner,
+    error: errorKommuner,
+    data: dataKommuner,
+  } = useQuery(ACTIVE_KOMMUNER_QUERY);
+  console.log(dataKommuner);
+
+  const { loading, error, data } = useQuery(GET_DATA_KOMMUNE, {
+    variables: { kommuner: dataKommuner.activeKommuner.kommuner },
+  });
   const { loading: loadingtest, data: test } = useQuery(
     APP_BAR_COLOR_SETTING_QUERY
   );
+  console.log(test)
   let kommuner = {} as any;
   let newinput = [] as any;
   if (!loading && !error) {
@@ -39,9 +53,11 @@ const Graph = () => {
       });
     });
   }
-
-  if (loading || loadingtest) return <div>Loading...</div>;
-  if (error) return <div>Error</div>;
+  if (dataKommuner.activeKommuner.kommuner.length === 0) {
+    return null;
+  }
+  if (loading || loadingKommuner || loadingtest) return <div>Loading...</div>;
+  if (error || errorKommuner) return <div>Error</div>;
   return (
     <div>
       {test.appBarColorSetting.setting}
