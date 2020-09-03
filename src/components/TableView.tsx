@@ -17,6 +17,7 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import {exportToCSV} from "../services/export";
 const TableView = () => {
   const {
     loading: loadingKommuner,
@@ -51,6 +52,8 @@ const TableView = () => {
   if (loading || loadingKommuner) return <div>Loading...</div>;
   if (error || errorKommuner) return <div>Error</div>;
   let years = getYears(data.verdi);
+
+
   console.log(formatter(data.verdi));
   console.log(data);
   return (
@@ -94,6 +97,9 @@ const TableView = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Button onClick={()=>exportToCSV(data.verdi,data.statistikkvariabel[0].variabelnavn)} variant="contained" color="primary">
+        download xlsx file
+      </Button>
     </div>
   );
 };
