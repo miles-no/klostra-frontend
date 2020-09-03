@@ -11,9 +11,13 @@ const typeDefs = gql`
   type ActiveKommuner {
     kommuner: [int!]
   }
+  type ActiveYears {
+    kommuner: [int!]
+  }
   type Query {
     appBarColorSetting: AppBarColorSetting!
     activeKommuner: ActiveKommuner!
+    activeYears: ActiveYears!
   }
   type Mutation {
     updateAppBarColorSetting(
@@ -21,6 +25,7 @@ const typeDefs = gql`
       name: String!
     ): AppBarColorSetting!
     updateActiveKommuner(kommuner: [int!]): ActiveKommuner!
+    updateActiveYears(years:[int!]): ActiveYears!
   }
 `;
 const resolvers = {
@@ -33,9 +38,6 @@ const resolvers = {
       { setting, name }: any,
       { cache }: any
     ) => {
-      // console.log(setting)
-      // userSettings.appBarColorSetting.setting = setting;
-      // userSettings.appBarColorSetting.name = name;
       let hold = {
         id: 1,
         name: name,
@@ -50,9 +52,6 @@ const resolvers = {
       return hold;
     },
     updateActiveKommuner: (_: any, { kommuner }: any, { cache }: any) => {
-      // console.log(setting)
-      // userSettings.appBarColorSetting.setting = setting;
-      // userSettings.appBarColorSetting.name = name;
       let hold = {
         kommuner,
         __typename: "ActiveKommuner",
@@ -60,6 +59,18 @@ const resolvers = {
       cache.writeData({
         data: {
           activeKommuner: hold,
+        },
+      });
+      return hold;
+    },
+    updateActiveYears: (_: any, { years }: any, { cache }: any) => {
+      let hold = {
+        years,
+        __typename: "ActiveYears",
+      };
+      cache.writeData({
+        data: {
+          activeYears: hold,
         },
       });
       return hold;
@@ -85,6 +96,10 @@ const client = new ApolloClient({
       activeKommuner: {
         kommuner: [],
         __typename: "ActiveKommuner",
+      },
+      activeYears: {
+        years: [],
+        __typename: "ActiveYears",
       },
     },
     resolvers: resolvers,

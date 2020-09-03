@@ -1,29 +1,34 @@
 import React from "react";
 import logo from "./logo.svg";
-import Graph from "./components/Graph";
-import Button from "./components/Button";
+import GraphView from "./components/GraphView";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Switch from "@material-ui/core/Switch";
+//import Button from "./components/Button";
+
 import Dropdown from "./components/Dropdown";
 import "./App.css";
+import TableView from "./components/TableView";
 
 function App() {
+  const [activeView, setActiveView] = React.useState<String>("graph");
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <h1>Miles kostra</h1>
         <Dropdown />
-        <Button />
-        <Graph />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <FormControlLabel
+          control={
+            <Switch
+              checked={activeView === "graph"}
+              onChange={() =>
+                setActiveView(activeView === "graph" ? "table" : "graph")
+              }
+              name="checkedA"
+            />
+          }
+          label="Graph"
+        />
+        {activeView === "graph" ? <GraphView /> : <TableView />}
       </header>
     </div>
   );
