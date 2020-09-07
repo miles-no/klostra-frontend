@@ -17,11 +17,12 @@ import {
   GET_DATA_KOMMUNE,
   ACTIVE_KOMMUNER_QUERY,
   ACTIVE_YEARS_QUERY,
+  ACTIVE_STAT_QUERY,
   GET_YEARS,
 } from "../graphql/query";
 import { useReactToPrint } from "react-to-print";
 import Button from "@material-ui/core/Button";
-import {formatter} from "../services/dataFormatter";
+import { formatter } from "../services/dataFormatter";
 
 const GraphView = () => {
   const {
@@ -34,11 +35,16 @@ const GraphView = () => {
     error: errorYears,
     data: dataYears,
   } = useQuery(ACTIVE_YEARS_QUERY);
-  console.log(dataYears);
+  const { loading: loadingStat, error: errorStat, data: dataStat } = useQuery(
+    ACTIVE_STAT_QUERY
+  );
+  console.log(dataKommuner.activeKommuner.kommuner);
+  console.log(dataYears.activeYears.years);
   const { loading, error, data } = useQuery(GET_DATA_KOMMUNE, {
     variables: {
       kommuner: dataKommuner.activeKommuner.kommuner,
       years: dataYears.activeYears.years,
+      stat: dataStat ? dataStat.activeStat.stat : [],
     },
   });
   const { loading: loadingtest, data: test } = useQuery(
@@ -100,6 +106,7 @@ const GraphView = () => {
   }
   if (loading || loadingKommuner) return <div>Loading...</div>;
   if (error || errorKommuner) return <div>Error</div>;
+  console.log(data.kommune);
   return (
     <div>
       <div ref={componentRef}>
@@ -109,8 +116,8 @@ const GraphView = () => {
           {data.statistikkvariabel[0].variabelnavn}
         </p>
         <LineChart
-          width={500}
-          height={300}
+          width={700}
+          height={700}
           data={formatter(data.verdi)}
           margin={{
             top: 5,

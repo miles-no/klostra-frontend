@@ -9,20 +9,34 @@ import FormControl from "@material-ui/core/FormControl";
 import {
   GET_KOMMUNER,
   GET_YEARS,
+  GET_STAT_VARIABLE,
   UPDATE_ACTIVE_KOMMUNER_MUTATION,
   UPDATE_ACTIVE_YEARS_MUTATION,
+  UPDATE_ACTIVE_STAT_MUTATION,
   ACTIVE_KOMMUNER_QUERY,
   ACTIVE_YEARS_QUERY,
+  ACTIVE_STAT_QUERY,
 } from "../graphql/query";
 import { useQuery } from "@apollo/react-hooks";
-
+import { filterKommunerBasedOnDataset } from "../services/dataFormatter";
 function Dropdown() {
   const [kommuner, setKommuner] = React.useState<any[]>([]);
   const [years, setYears] = React.useState<number[]>([]);
+  const [stat, setStat] = React.useState<any>();
+  //const [datasetId, setDatasetId] = React.useState<number>();
   const { loading, error, data } = useQuery(GET_KOMMUNER);
+  const { loading: loadingStat, error: errorStat, data: dataStat } = useQuery(
+    GET_STAT_VARIABLE
+  );
+
   const { loading: loadingYear, error: errorYear, data: dataYear } = useQuery(
     GET_YEARS
   );
+  const {
+    loading: loadingActiveStat,
+    error: errorActiveLocal,
+    data: dataActiveStat,
+  } = useQuery(ACTIVE_STAT_QUERY);
 
   const [updateActiveKommuner] = useMutation(UPDATE_ACTIVE_KOMMUNER_MUTATION, {
     update: (cache, mutation) => {
@@ -62,28 +76,51 @@ function Dropdown() {
       });
     },
   });
-  if (loading || loadingYear) return <h2>Loading...</h2>;
-  if (error || errorYear) return <h2>Error</h2>;
+  const [updateActiveStat] = useMutation(UPDATE_ACTIVE_STAT_MUTATION);
+  if (loading || loadingYear || loadingStat) return <h2>Loading...</h2>;
+  if (error || errorYear || errorStat) return <h2>Error</h2>;
   //setYears(dataYear.tidsperiode)
-  console.log(dataYear);
   function selectKommune(event: any) {
-    console.log(event.target.value);
     setKommuner(event.target.value);
     let filterId = event.target.value.map((k: any) => k.id);
-    console.log(years);
     updateActiveKommuner({ variables: { kommuner: filterId } });
   }
   function selectYear(event: any) {
-    console.log(event.target.value);
     setYears(event.target.value);
-    //let filterId = event.target.value.map((k: any) => k.id);
     updateActiveYears({ variables: { years: event.target.value } });
+  }
+  function selectStat(event: any) {
+    setStat(event.target.value);
+    console.log(event.target.value);
+    // setDatasetId(event.target.value.dataset_id);
+    updateActiveStat({ variables: { stat: event.target.value.id } });
+  }
+  function filterKommuneNotInDataset() {
+    let kommunerWithData = filterKommunerBasedOnDataset(
+      kommuner,
+      stat ? stat.dataset_id : undefined
+    );
+    let id = kommunerWithData.map((k: any) => k.id);
+    return kommuner
+      .filter((k: any) => !id.includes(k.id))
+      .map((k: any) => k.navn);
   }
   return (
     <div style={{ marginTop: "50px" }}>
+      <FormControl style={{ width: "10em" }}>
+        <InputLabel id="demo-mutiple-name-label">Statistikkvariabel</InputLabel>
+        <Select value={stat || []} onChange={selectStat}>
+          {dataStat.statistikkvariabel.map((item: any) => (
+            <MenuItem key={item.id} value={item}>
+              {item.variabelnavn}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <FormControl style={{ width: "7em" }}>
         <InputLabel id="demo-mutiple-name-label">Kommuner</InputLabel>
         <Select
+          disabled={!dataActiveStat}
           multiple
           value={kommuner}
           onChange={selectKommune}
@@ -106,6 +143,7 @@ function Dropdown() {
       <FormControl style={{ width: "15em" }}>
         <InputLabel id="demo-mutiple-name-label">Tidsperiode</InputLabel>
         <Select
+          disabled={!dataActiveStat}
           multiple
           value={years}
           onChange={selectYear}
@@ -125,6 +163,17 @@ function Dropdown() {
           ))}
         </Select>
       </FormControl>
+      {filterKommuneNotInDataset().length !== 0 ? (
+        <p style={{ fontSize: "0.5em" }}>
+          {filterKommuneNotInDataset().map((n: String, i: number) => {
+            if (i === filterKommuneNotInDataset().length - 1) {
+              return n + " ";
+            }
+            return n + ", ";
+          })}
+          har ikke verdi for denne statistikken
+        </p>
+      ) : undefined}
     </div>
   );
 }

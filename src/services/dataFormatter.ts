@@ -22,3 +22,16 @@ export const getYears = (inputData: any) => {
     .map((val: any) => val.tid_id)
     .filter((a: any, b: any, c: any) => c.indexOf(a) === b);
 };
+export const filterKommunerBasedOnDataset = (
+  kommune: any,
+  datasetId: number
+) => {
+  let newArray = kommune.filter(
+    (k: any) =>
+      k.kommune_datasets.filter((d: any) => {
+        console.log(d.dataset_id, datasetId);
+        return d.dataset_id === datasetId;
+      }).length !== 0
+  );
+  return newArray;
+};

@@ -29,13 +29,13 @@ export const GET_DATA = gql`
   }
 `;
 export const GET_DATA_KOMMUNE = gql`
-  query verdiList($kommuner: [Int!], $years: [Int!]) {
-    kommune(where: { id: { _in: [101, 104] } }) {
+  query verdiList($kommuner: [Int!], $years: [Int!], $stat: Int!) {
+    kommune(where: { id: { _in: $kommuner } }) {
       kommune_nr
       id
       navn
     }
-    statistikkvariabel(where: { id: { _eq: 1 } }) {
+    statistikkvariabel(where: { id: { _eq: $stat } }) {
       variabelnavn
       id
     }
@@ -43,7 +43,7 @@ export const GET_DATA_KOMMUNE = gql`
       where: {
         kommune_id: { _in: $kommuner }
         tid_id: { _in: $years }
-        variabel_id: { _eq: 1 }
+        variabel_id: { _eq: $stat }
         verdi: {}
       }
     ) {
@@ -60,6 +60,9 @@ export const GET_KOMMUNER = gql`
       kommune_nr
       id
       navn
+      kommune_datasets {
+        dataset_id
+      }
     }
   }
 `;
@@ -67,6 +70,16 @@ export const GET_YEARS = gql`
   {
     tidsperiode {
       year
+    }
+  }
+`;
+export const GET_STAT_VARIABLE = gql`
+  {
+    statistikkvariabel {
+      variabelnavn
+      id
+      enhet
+      dataset_id
     }
   }
 `;
@@ -94,6 +107,13 @@ export const ACTIVE_YEARS_QUERY = gql`
     }
   }
 `;
+export const ACTIVE_STAT_QUERY = gql`
+  query activeStat {
+    activeStat @client {
+      stat @client
+    }
+  }
+`;
 export const UPDATE_APP_BAR_COLOR_SETTING_MUTATION = gql`
   mutation updateAppBarColorSetting($setting: String!, $name: String!) {
     updateAppBarColorSetting(setting: $setting, name: $name) @client
@@ -107,5 +127,10 @@ export const UPDATE_ACTIVE_KOMMUNER_MUTATION = gql`
 export const UPDATE_ACTIVE_YEARS_MUTATION = gql`
   mutation updateActiveYears($years: [int!]) {
     updateActiveYears(years: $years) @client
+  }
+`;
+export const UPDATE_ACTIVE_STAT_MUTATION = gql`
+  mutation updateActiveStat($stat: int!) {
+    updateActiveStat(stat: $stat) @client
   }
 `;

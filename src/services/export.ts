@@ -11,3 +11,4 @@ export const exportToCSV = (csvData:any, fileName:any) => {
   const data = new Blob([excelBuffer], { type: fileType });
   FileSaver.saveAs(data, fileName + fileExtension);
 };
+//todo check if we can do this in csv

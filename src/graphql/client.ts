@@ -14,6 +14,9 @@ const typeDefs = gql`
   type ActiveYears {
     kommuner: [int!]
   }
+  type ActiveStat {
+    stat: int!
+  }
   type Query {
     appBarColorSetting: AppBarColorSetting!
     activeKommuner: ActiveKommuner!
@@ -25,7 +28,8 @@ const typeDefs = gql`
       name: String!
     ): AppBarColorSetting!
     updateActiveKommuner(kommuner: [int!]): ActiveKommuner!
-    updateActiveYears(years:[int!]): ActiveYears!
+    updateActiveYears(years: [int!]): ActiveYears!
+    updateActiveStat(stat: int!): ActiveStat!
   }
 `;
 const resolvers = {
@@ -75,6 +79,18 @@ const resolvers = {
       });
       return hold;
     },
+    updateActiveStat: (_: any, { stat }: any, { cache }: any) => {
+      let hold = {
+        stat,
+        __typename: "ActiveStat",
+      };
+      cache.writeData({
+        data: {
+          activeStat: hold,
+        },
+      });
+      return hold;
+    },
   },
 };
 const client = new ApolloClient({
@@ -101,9 +117,12 @@ const client = new ApolloClient({
         years: [],
         __typename: "ActiveYears",
       },
+      activeStat: {
+        stat: undefined,
+        __typename: "ActiveStat",
+      },
     },
     resolvers: resolvers,
   },
-  assumeImmutableResults: true,
 });
 export default client;
