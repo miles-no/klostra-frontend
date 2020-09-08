@@ -103,12 +103,21 @@ const TableView = () => {
       </TableContainer>
       <Button
         onClick={() =>
-          exportToCSV(data.verdi, data.statistikkvariabel[0].variabelnavn)
+          exportToCSV(data.verdi, data.statistikkvariabel[0].variabelnavn, "xlsx")
         }
         variant="contained"
         color="primary"
       >
         download xlsx file
+      </Button>
+      <Button
+        onClick={() =>
+          exportToCSV(data.verdi, data.statistikkvariabel[0].variabelnavn, "csv")
+        }
+        variant="contained"
+        color="secondary"
+      >
+        download CSV file
       </Button>
     </div>
   );

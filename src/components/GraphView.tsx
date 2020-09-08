@@ -117,7 +117,7 @@ const GraphView = () => {
         </p>
         <LineChart
           width={700}
-          height={700}
+          height={400}
           data={formatter(data.verdi)}
           margin={{
             top: 5,
