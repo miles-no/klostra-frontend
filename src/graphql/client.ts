@@ -118,7 +118,7 @@ const client = new ApolloClient({
         __typename: "ActiveYears",
       },
       activeStat: {
-        stat: undefined,
+        stat: [],
         __typename: "ActiveStat",
       },
     },

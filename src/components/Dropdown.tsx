@@ -91,8 +91,6 @@ function Dropdown() {
   }
   function selectStat(event: any) {
     setStat(event.target.value);
-    console.log(event.target.value);
-    // setDatasetId(event.target.value.dataset_id);
     updateActiveStat({ variables: { stat: event.target.value.id } });
   }
   function filterKommuneNotInDataset() {
@@ -118,13 +116,13 @@ function Dropdown() {
         </Select>
       </FormControl>
       <FormControl style={{ width: "7em" }}>
-        <InputLabel id="demo-mutiple-name-label">Kommuner</InputLabel>
+        <InputLabel>Kommuner</InputLabel>
         <Select
           disabled={!dataActiveStat}
           multiple
           value={kommuner}
           onChange={selectKommune}
-          input={<Input id="select-multiple-chip" />}
+          input={<Input />}
           renderValue={(selected) => (
             <div>
               {(selected as string[]).map((item: any, index) => (
@@ -141,13 +139,13 @@ function Dropdown() {
         </Select>
       </FormControl>
       <FormControl style={{ width: "15em" }}>
-        <InputLabel id="demo-mutiple-name-label">Tidsperiode</InputLabel>
+        <InputLabel>Tidsperiode</InputLabel>
         <Select
           disabled={!dataActiveStat}
           multiple
           value={years}
           onChange={selectYear}
-          input={<Input id="select-multiple-chip" />}
+          input={<Input />}
           renderValue={(selected) => (
             <div>
               {(selected as string[]).map((item: any, index) => (
