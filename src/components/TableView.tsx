@@ -1,13 +1,10 @@
-import React, { useRef } from "react";
+import React from "react";
 import { useQuery } from "@apollo/react-hooks";
 import {
-  APP_BAR_COLOR_SETTING_QUERY,
-  GET_DATA,
   GET_DATA_KOMMUNE,
   ACTIVE_KOMMUNER_QUERY,
   ACTIVE_YEARS_QUERY,
   ACTIVE_STAT_QUERY,
-  GET_YEARS,
 } from "../graphql/query";
 import Button from "@material-ui/core/Button";
 import { formatter, getYears } from "../services/dataFormatter";
@@ -33,7 +30,6 @@ const TableView = () => {
   const { loading: loadingStat, error: errorStat, data: dataStat } = useQuery(
     ACTIVE_STAT_QUERY
   );
-  console.log(dataYears);
   const { loading, error, data } = useQuery(GET_DATA_KOMMUNE, {
     variables: {
       kommuner: dataKommuner.activeKommuner.kommuner,
@@ -54,12 +50,12 @@ const TableView = () => {
     }
     return null;
   }
-  if (loading || loadingKommuner) return <div>Loading...</div>;
-  if (error || errorKommuner) return <div>Error</div>;
+  if (loading || loadingKommuner || loadingYears || loadingStat)
+    return <div>Loading...</div>;
+  if (error || errorKommuner || errorYears || errorStat)
+    return <div>Error</div>;
   let years = getYears(data.verdi);
 
-  console.log(formatter(data.verdi));
-  console.log(data);
   return (
     <div>
       <p style={{ fontSize: "0.7em" }}>
@@ -70,8 +66,10 @@ const TableView = () => {
           <TableHead>
             <TableRow>
               <TableCell>Kommune</TableCell>
-              {years.map((y: any, i:number) => (
-                <TableCell align="right" key={i}>{y}</TableCell>
+              {years.map((y: any, i: number) => (
+                <TableCell align="right" key={i}>
+                  {y}
+                </TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -92,8 +90,10 @@ const TableView = () => {
                     <TableCell component="th" scope="row">
                       {k.navn}
                     </TableCell>
-                    {values.map((numbers: any, i:number) => (
-                      <TableCell align="right" key={i}>{numbers}</TableCell>
+                    {values.map((numbers: any, i: number) => (
+                      <TableCell align="right" key={i}>
+                        {numbers}
+                      </TableCell>
                     ))}
                   </TableRow>
                 );
@@ -103,7 +103,11 @@ const TableView = () => {
       </TableContainer>
       <Button
         onClick={() =>
-          exportToCSV(data.verdi, data.statistikkvariabel[0].variabelnavn, "xlsx")
+          exportToCSV(
+            data.verdi,
+            data.statistikkvariabel[0].variabelnavn,
+            "xlsx"
+          )
         }
         variant="contained"
         color="primary"
@@ -112,7 +116,11 @@ const TableView = () => {
       </Button>
       <Button
         onClick={() =>
-          exportToCSV(data.verdi, data.statistikkvariabel[0].variabelnavn, "csv")
+          exportToCSV(
+            data.verdi,
+            data.statistikkvariabel[0].variabelnavn,
+            "csv"
+          )
         }
         variant="contained"
         color="secondary"

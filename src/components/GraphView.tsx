@@ -12,13 +12,10 @@ import {
 } from "recharts";
 import { COLORS } from "../constants/colors";
 import {
-  APP_BAR_COLOR_SETTING_QUERY,
-  GET_DATA,
   GET_DATA_KOMMUNE,
   ACTIVE_KOMMUNER_QUERY,
   ACTIVE_YEARS_QUERY,
   ACTIVE_STAT_QUERY,
-  GET_YEARS,
 } from "../graphql/query";
 import { useReactToPrint } from "react-to-print";
 import Button from "@material-ui/core/Button";
@@ -38,8 +35,6 @@ const GraphView = () => {
   const { loading: loadingStat, error: errorStat, data: dataStat } = useQuery(
     ACTIVE_STAT_QUERY
   );
-  console.log(dataKommuner.activeKommuner.kommuner);
-  console.log(dataYears.activeYears.years);
   const { loading, error, data } = useQuery(GET_DATA_KOMMUNE, {
     variables: {
       kommuner: dataKommuner.activeKommuner.kommuner,
@@ -47,9 +42,6 @@ const GraphView = () => {
       stat: dataStat ? dataStat.activeStat.stat : [],
     },
   });
-  const { loading: loadingtest, data: test } = useQuery(
-    APP_BAR_COLOR_SETTING_QUERY
-  );
   //PRINTING
   const componentRef = useRef(null);
   const onBeforeGetContentResolve = React.useRef(Promise.resolve);
@@ -104,9 +96,8 @@ const GraphView = () => {
     }
     return null;
   }
-  if (loading || loadingKommuner) return <div>Loading...</div>;
-  if (error || errorKommuner) return <div>Error</div>;
-  console.log(data.kommune);
+  if (loading || loadingKommuner || loadingYears || loadingStat) return <div>Loading...</div>;
+  if (error || errorKommuner || errorYears || errorStat) return <div>Error</div>;
   return (
     <div>
       <div ref={componentRef}>

@@ -1,5 +1,4 @@
 import React from "react";
-import logo from "./logo.svg";
 import GraphView from "./components/GraphView";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
